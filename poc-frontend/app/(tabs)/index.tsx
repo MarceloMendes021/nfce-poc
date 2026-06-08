@@ -4,17 +4,10 @@ import { Pressable, StatusBar, StyleSheet, Text, View } from "react-native";
 import { router } from "expo-router";
 
 export default function HomeScreen() {
-  // Permissão da câmera
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
-
-  // Controle de fluxo
   const [isScanning, setIsScanning] = useState(false);
   const [scanned, setScanned] = useState(false);
 
-  // Resultado do QR
-  const [qrData, setQrData] = useState<string | null>(null);
-
-  // Pedir permissão ao abrir o app
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -22,7 +15,6 @@ export default function HomeScreen() {
     })();
   }, []);
 
-  // Quando o QR for lido
   const handleBarcodeScanned = ({ data }: { data: string }) => {
     setScanned(true);
     setIsScanning(false);
@@ -33,7 +25,6 @@ export default function HomeScreen() {
     });
   };
 
-  // Permissão pendente
   if (hasCameraPermission === null) {
     return (
       <View style={styles.container}>
@@ -42,7 +33,6 @@ export default function HomeScreen() {
     );
   }
 
-  // Permissão negada
   if (hasCameraPermission === false) {
     return (
       <View style={styles.container}>
@@ -55,8 +45,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* TELA INICIAL */}
-      {!isScanning && !qrData && (
+      {!isScanning && (
         <>
           <Text style={styles.title}>POC NFC-e</Text>
           <Text style={styles.subtitle}>Leia o QR Code da nota fiscal</Text>
@@ -64,7 +53,6 @@ export default function HomeScreen() {
           <Pressable
             style={styles.button}
             onPress={() => {
-              setQrData(null);
               setScanned(false);
               setIsScanning(true);
             }}
@@ -76,13 +64,7 @@ export default function HomeScreen() {
 
       {isScanning && (
         <View style={StyleSheet.absoluteFillObject}>
-          <CameraView
-            style={StyleSheet.absoluteFillObject}
-            onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
-            barcodeScannerSettings={{
-              barcodeTypes: ["qr"],
-            }}
-          />
+          <CameraView style={StyleSheet.absoluteFillObject} onBarcodeScanned={scanned ? undefined : handleBarcodeScanned} barcodeScannerSettings={{ barcodeTypes: ["qr"] }} />
 
           <Pressable
             style={styles.backButton}
@@ -95,30 +77,10 @@ export default function HomeScreen() {
           </Pressable>
         </View>
       )}
-
-      {/* RESULTADO */}
-      {qrData && (
-        <View style={styles.result}>
-          <Text style={styles.subtitle}>QR Code lido:</Text>
-
-          <Text selectable style={styles.qrText}>
-            {qrData}
-          </Text>
-
-          <Pressable
-            style={styles.button}
-            onPress={() => {
-              setQrData(null);
-              setScanned(false);
-            }}
-          >
-            <Text style={styles.buttonText}>Escanear novamente</Text>
-          </Pressable>
-        </View>
-      )}
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -137,19 +99,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     marginBottom: 16,
-  },
-  result: {
-    position: "absolute",
-    bottom: 40,
-    left: 20,
-    right: 20,
-    backgroundColor: "#1E1E1E",
-    padding: 16,
-    borderRadius: 8,
-  },
-  qrText: {
-    color: "#FFFFFF",
-    marginVertical: 12,
   },
   button: {
     backgroundColor: "#1DB954",
