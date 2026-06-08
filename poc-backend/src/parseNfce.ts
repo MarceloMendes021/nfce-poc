@@ -18,14 +18,8 @@ type NfceResult = {
 export function parseNfce(html: string): NfceResult {
   const $ = cheerio.load(html);
 
-  // =========================
-  // ESTABELECIMENTO
-  // =========================
   const establishmentName = $("#u20").text().trim();
 
-  // =========================
-  // ITENS
-  // =========================
   const items: NfceItem[] = [];
 
   $("#tabResult tr").each((_, row) => {
@@ -34,11 +28,8 @@ export function parseNfce(html: string): NfceResult {
     if (!description) return;
 
     const quantityText = $(row).find(".Rqtd").text().replace("Qtde.:", "").replace(",", ".").trim();
-
     const unitText = $(row).find(".RUN").text().replace("UN:", "").trim();
-
     const unitValueText = $(row).find(".RvlUnit").text().replace("Vl. Unit.:", "").replace(",", ".").trim();
-
     const totalValueText = $(row).find(".valor").text().replace(",", ".").trim();
 
     items.push({
@@ -51,9 +42,7 @@ export function parseNfce(html: string): NfceResult {
   });
 
   return {
-    establishment: {
-      name: establishmentName,
-    },
+    establishment: { name: establishmentName },
     items,
   };
 }
