@@ -7,7 +7,7 @@
     "start:dev": "npx ts-node src/server.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Marcelo Mendes",
   "license": "ISC",
   "description": "",
   "dependencies": {
